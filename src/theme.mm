@@ -29,32 +29,50 @@
 
 - (void)interfaceThemeChanged:(NSNotification *)notification {
     // Determine the current interface style
-    NSString *theme = [[NSUserDefaults standardUserDefaults] stringForKey:@"AppleInterfaceStyle"];
-    
-    if ([theme isEqualToString:@"Dark"]) {
-        @autoreleasepool {
+    @autoreleasepool {
+        NSString *theme = [[NSUserDefaults standardUserDefaults] stringForKey:@"AppleInterfaceStyle"];
+        
+        if ([theme isEqualToString:@"Dark"]) {
+            
+            NSError *err = nil;
             NSTask *task = [[NSTask alloc] init];
             [task setLaunchPath:@"/opt/homebrew/bin/kitty"];
             NSArray *arguments = [NSArray arrayWithObjects:@"+kitten", @"themes",
                                   @"--reload-in=all", @"--config-file-name",
                                   @"Catppuccin-Mocha.conf", @"Catppuccin-Mocha" , nil];
             [task setArguments:arguments];
-            [task launch];
-        }
-        NSLog(@"The system has switched to Dark Mode.");
-    } else {
-        @autoreleasepool {
+            BOOL succ = [task launchAndReturnError:&err];
+            if (!succ) {
+                // Error handling
+                NSLog(@"Error: %@, %@", err, [err localizedDescription]);
+            }
+            //[err release];
+            // [task release];
+            //}
+            NSLog(@"The system has switched to Dark Mode.");
+        } else {
+            //@autoreleasepool {
+            NSError *err = nil;
             NSTask *task = [[NSTask alloc] init];
+            
             [task setLaunchPath:@"/opt/homebrew/bin/kitty"];
             
             NSArray *arguments = [NSArray arrayWithObjects:@"+kitten", @"themes",
                                   @"--reload-in=all", @"--config-file-name", @"Ayu Light.conf", @"Ayu Light" , nil];
-
+            
             
             [task setArguments:arguments];
-            [task launch];
+            BOOL succ = [task launchAndReturnError:&err];
+            if (!succ) {
+                // Error handling
+                NSLog(@"Error: %@, %@", err, [err localizedDescription]);
+            }
+            
+            //[task launch];
+            //}
+            // [task release];
+            NSLog(@"The system has switched to Light Mode.");
         }
-        NSLog(@"The system has switched to Light Mode.");
     }
 }
 
